@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Delfos - Create Data Source</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#13a4ec",
+              "background-light": "#f6f7f8",
+              "background-dark": "#101c22",
+            },
+            fontFamily: {
+              "display": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="flex min-h-screen">
+<aside class="w-64 flex-shrink-0 bg-[#111618] p-4 flex flex-col justify-between">
+<div class="flex flex-col gap-8">
+<div class="flex items-center gap-3 px-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Delfos application logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD_sU3PH7trDw1Pqjg_astUhd0zB-fc3lWTkFRB_FqkN6gTqhfBHmGpA8AdxjChEgSZEZI88pCCs0IyARMMrtu80wlnGdBMX8VdHCAinZ-b0y4-9yoArGhdzY6d1by61tdFeFxmss4Xu3UDO6syj5W-kJYHAWRam_H5pNzZwVQJfc9iteQqMlggReNc5mjd14B2oRCw9sd-y92NglDVPyUdxRowPW9bs2oQNcdwp7Uo9zIaq5O6v0UBew4GUylhLRxwCUqD-WJzrqg");'></div>
+<div class="flex flex-col">
+<h1 class="text-white text-base font-bold leading-normal">Delfos</h1>
+<p class="text-[#9db0b9] text-sm font-normal leading-normal">Data Assistant</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2 text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">folder</span>
+<p class="text-sm font-medium leading-normal">Collections</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-primary" href="#">
+<span class="material-symbols-outlined">database</span>
+<p class="text-sm font-medium leading-normal">Data Sources</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">code</span>
+<p class="text-sm font-medium leading-normal">Queries</p>
+</a>
+</nav>
+</div>
+<div class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2 text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-sm font-medium leading-normal">Settings</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<p class="text-sm font-medium leading-normal">Log Out</p>
+</a>
+</div>
+</aside>
+<main class="flex-1 p-8 overflow-y-auto">
+<div class="max-w-4xl mx-auto">
+<div class="mb-8">
+<h1 class="text-slate-900 dark:text-white text-3xl font-bold leading-tight tracking-tight">Create New Data Source</h1>
+<p class="text-slate-500 dark:text-[#9db0b9] text-base font-normal leading-normal mt-1">Configure the details for your new data source connection.</p>
+</div>
+<div class="bg-white dark:bg-[#111618] rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-8">
+<form class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<label class="flex flex-col">
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-normal pb-2">Name</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-[#3b4b54] bg-white dark:bg-[#1c2327] h-11 placeholder:text-slate-400 dark:placeholder:text-[#9db0b9] px-3 text-sm font-normal leading-normal" placeholder="Production PostgreSQL DB" value=""/>
+</label>
+<label class="flex flex-col">
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-normal pb-2">Type</p>
+<select class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-[#3b4b54] bg-white dark:bg-[#1c2327] h-11 placeholder:text-slate-400 dark:placeholder:text-[#9db0b9] px-3 text-sm font-normal leading-normal">
+<option>Select a type</option>
+<option value="postgresql">PostgreSQL</option>
+<option value="mongodb">MongoDB</option>
+</select>
+</label>
+</div>
+<label class="flex flex-col">
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-normal pb-2">Connection URI</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-[#3b4b54] bg-white dark:bg-[#1c2327] h-11 placeholder:text-slate-400 dark:placeholder:text-[#9db0b9] px-3 text-sm font-normal leading-normal" placeholder="postgresql://user:password@host:port/dbname" value=""/>
+</label>
+<div class="relative">
+<label class="flex flex-col">
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-normal pb-2">Credentials</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-[#3b4b54] bg-white dark:bg-[#1c2327] h-11 placeholder:text-slate-400 dark:placeholder:text-[#9db0b9] pl-3 pr-10 text-sm font-normal leading-normal" placeholder="Enter password or access token" type="password" value=""/>
+</label>
+<button class="absolute right-3 top-[37px] text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300" type="button">
+<span class="material-symbols-outlined text-xl">visibility</span>
+</button>
+</div>
+<label class="flex flex-col">
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-normal pb-2">Associated Collection</p>
+<select class="form-select flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-300 dark:border-[#3b4b54] bg-white dark:bg-[#1c2327] h-11 placeholder:text-slate-400 dark:placeholder:text-[#9db0b9] px-3 text-sm font-normal leading-normal">
+<option>Select a collection</option>
+<option selected="" value="sales_data">Sales Data</option>
+<option value="user_analytics">User Analytics</option>
+<option value="inventory_logs">Inventory Logs</option>
+</select>
+</label>
+<div class="flex items-center gap-2 text-green-600 dark:text-green-400 hidden">
+<span class="material-symbols-outlined">check_circle</span>
+<p class="text-sm font-medium">Connection successful</p>
+</div>
+<div class="flex items-center gap-2 text-red-600 dark:text-red-400 hidden">
+<span class="material-symbols-outlined">error</span>
+<p class="text-sm font-medium">Invalid URI format</p>
+</div>
+<div class="flex items-center justify-end gap-4 pt-4">
+<button class="px-4 py-2 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg" type="button">Cancel</button>
+<button class="px-4 py-2 text-sm font-semibold text-primary border border-primary/50 hover:bg-primary/10 rounded-lg" type="button">Test Connection</button>
+<button class="px-4 py-2 text-sm font-semibold text-white bg-primary hover:bg-primary/90 rounded-lg" type="submit">Save</button>
+</div>
+</form>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

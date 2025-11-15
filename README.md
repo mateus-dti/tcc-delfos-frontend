@@ -36,10 +36,40 @@ git push -u origin main
 - Resultados (tabela paginada, exportação)
 - Histórico de consultas
 
-## Tecnologias
+## 🛠️ Instalação
+
+```bash
+# Instalar dependências
+npm install
+
+# Ou usando yarn
+yarn install
+
+# Ou usando pnpm
+pnpm install
+```
+
+## 🚀 Comandos Disponíveis
+
+```bash
+# Iniciar servidor de desenvolvimento
+npm run dev
+
+# Build para produção
+npm run build
+
+# Preview do build de produção
+npm run preview
+
+# Executar linter
+npm run lint
+```
+
+## 📦 Tecnologias
 
 - React 18+
-- Vite
-- TypeScript
-- Ant Design (UI components)
+- Vite 5+
+- TypeScript 5+
+- Ant Design 5+ (UI components)
+- React Router DOM 6+ (para navegação)
 
