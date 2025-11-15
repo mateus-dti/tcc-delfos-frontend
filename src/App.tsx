@@ -1,6 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login'
 import ForgotPassword from './pages/ForgotPassword'
+import Collections from './pages/Collections'
+import DataSources from './pages/DataSources'
+import CreateCollection from './pages/CreateCollection'
+import CreateDataSource from './pages/CreateDataSource'
+import CollectionDetails from './pages/CollectionDetails'
 import { authService } from './services/authService'
 import { ThemeToggle } from './components/ThemeToggle'
 
@@ -43,6 +48,62 @@ function App() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/collections"
+          element={
+            <ProtectedRoute>
+              <Collections />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/collections/new"
+          element={
+            <ProtectedRoute>
+              <CreateCollection />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/collections/:id"
+          element={
+            <ProtectedRoute>
+              <CollectionDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/collections/:id/edit"
+          element={
+            <ProtectedRoute>
+              <CreateCollection />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/data-sources"
+          element={
+            <ProtectedRoute>
+              <DataSources />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/data-sources/new"
+          element={
+            <ProtectedRoute>
+              <CreateDataSource />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/data-sources/:id/edit"
+          element={
+            <ProtectedRoute>
+              <CreateDataSource />
             </ProtectedRoute>
           }
         />
