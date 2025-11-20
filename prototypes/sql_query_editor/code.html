@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Delfos - SQL Editor</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style>
+        .syntax-highlight .keyword { color: #8F9DFF; } /* Blue for keywords */
+        .syntax-highlight .function { color: #C3A6FF; } /* Purple for functions */
+        .syntax-highlight .string { color: #72D29B; } /* Green for strings */
+        .syntax-highlight .number { color: #FFC480; } /* Amber for numbers */
+        .syntax-highlight .operator { color: #9DB0B9; } /* Gray for operators */
+        .syntax-highlight .comment { color: #6A7F8B; } /* Darker gray for comments */
+        .line-numbers {
+            font-family: monospace;
+            color: #4A5C66;
+            padding-right: 16px;
+            text-align: right;
+            user-select: none;
+        }
+    </style>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#13a4ec",
+              "background-light": "#F4F5F7",
+              "background-dark": "#101c22",
+            },
+            fontFamily: {
+              "display": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex min-h-screen w-full">
+<!-- SideNavBar -->
+<aside class="flex flex-col w-64 bg-white dark:bg-[#111618] border-r border-gray-200 dark:border-[#283339]">
+<div class="flex h-full flex-col justify-between p-4">
+<div class="flex flex-col gap-4">
+<div class="flex gap-3 items-center px-3 py-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Delfos application logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBY1NJnVnvd5j7nxx7i0I-jLpuJbg0YYIAIH8rNndqZrBaCPpPxPqliX-ZAvzhFEzID38X3OG9OKa1xt36nxCzrHPrg2ZTh5eEpgGgB67lWcgKR8P2juVsSsl9oEskfKpcWLblfu9KcQnsItHAyq-UziT6Ei2AFXnTP3XhdCv_rtaUdL65BkxnL6XKYjADp2w6Muzdo3ZCBBIMXL_4EplC0uvwRjlenWGg1Rg27dKrLiWEYgKOL_o92rdtrQScEsGkOPEczb9tCMkI");'></div>
+<div class="flex flex-col">
+<h1 class="text-gray-900 dark:text-white text-base font-bold leading-normal">Delfos</h1>
+<p class="text-gray-500 dark:text-[#9db0b9] text-sm font-normal leading-normal">Data Assistant</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2 mt-4">
+<a class="flex items-center gap-3 px-3 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#283339] rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="Layout">dashboard</span>
+<p class="text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#283339] rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="Database">database</span>
+<p class="text-sm font-medium leading-normal">Collections</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#283339] rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="ClockCounterClockwise">history</span>
+<p class="text-sm font-medium leading-normal">Query History</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 dark:bg-[#283339] text-primary dark:text-white" href="#">
+<span class="material-symbols-outlined font-bold" data-icon="Code">code_blocks</span>
+<p class="text-sm font-bold leading-normal">SQL Editor</p>
+</a>
+</nav>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col p-6 md:p-8 lg:p-10">
+<div class="w-full max-w-5xl mx-auto flex-1 flex flex-col">
+<!-- Breadcrumbs -->
+<div class="flex flex-wrap items-center gap-2 mb-6">
+<a class="text-gray-500 dark:text-[#9db0b9] text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary" href="#">Natural Language Query</a>
+<span class="text-gray-400 dark:text-[#9db0b9] text-sm font-medium leading-normal">/</span>
+<a class="text-gray-500 dark:text-[#9db0b9] text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary" href="#">'Show me last month's sales'</a>
+<span class="text-gray-400 dark:text-[#9db0b9] text-sm font-medium leading-normal">/</span>
+<span class="text-gray-900 dark:text-white text-sm font-medium leading-normal">SQL Editor</span>
+</div>
+<!-- PageHeading -->
+<div class="flex flex-wrap justify-between gap-3 mb-6">
+<div class="flex min-w-72 flex-col gap-2">
+<h1 class="text-gray-900 dark:text-white text-3xl md:text-4xl font-black leading-tight tracking-[-0.03em]">Review &amp; Execute Query</h1>
+<p class="text-gray-500 dark:text-[#9db0b9] text-base font-normal leading-normal">Review the generated SQL below. You can make changes before running the query.</p>
+</div>
+</div>
+<!-- SQL Editor Pane -->
+<div class="flex flex-col flex-1 bg-white dark:bg-[#1C2327] rounded-xl border border-gray-200 dark:border-[#3b4b54] overflow-hidden">
+<div class="flex-1 p-4 flex overflow-auto">
+<div class="line-numbers text-sm">
+                            1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12
+                        </div>
+<textarea class="form-input flex-1 resize-none bg-transparent border-0 focus:outline-0 focus:ring-0 p-0 pl-4 text-gray-800 dark:text-gray-200 font-mono text-sm leading-relaxed" spellcheck="false">-- Generated from: 'Show me last month's sales'
+SELECT
+    p.product_name,
+    SUM(oi.quantity) AS total_quantity_sold,
+    SUM(oi.quantity * oi.price) AS total_sales
+FROM
+    order_items oi
+JOIN
+    products p ON oi.product_id = p.product_id
+JOIN
+    orders o ON oi.order_id = o.order_id
+WHERE
+    o.order_date &gt;= date_trunc('month', current_date - interval '1' month)
+    AND o.order_date &lt; date_trunc('month', current_date)
+GROUP BY
+    p.product_name
+ORDER BY
+    total_sales DESC;
+                        </textarea>
+</div>
+</div>
+<!-- ButtonGroup -->
+<div class="flex flex-wrap items-center gap-4 mt-6">
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary hover:bg-primary/90 text-white text-base font-bold leading-normal tracking-[0.015em]">
+<span class="material-symbols-outlined mr-2">play_arrow</span>
+<span class="truncate">Execute</span>
+</button>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-gray-200 dark:bg-[#283339] hover:bg-gray-300 dark:hover:bg-[#3b4b54] text-gray-800 dark:text-white text-base font-bold leading-normal tracking-[0.015em]">
+<span class="material-symbols-outlined mr-2">task_alt</span>
+<span class="truncate">Validate</span>
+</button>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 text-gray-500 dark:text-[#9db0b9] hover:bg-gray-100 dark:hover:bg-[#283339] text-base font-bold leading-normal tracking-[0.015em]">
+<span class="truncate">Cancel</span>
+</button>
+</div>
+<!-- Status/Toast Notification Area -->
+<div class="mt-6">
+<div class="flex items-center gap-3 p-4 rounded-lg bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-700/50">
+<span class="material-symbols-outlined text-green-600 dark:text-green-400">check_circle</span>
+<p class="text-sm font-medium text-green-800 dark:text-green-300">Validation Successful. The query syntax is correct.</p>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

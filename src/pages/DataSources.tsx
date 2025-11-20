@@ -56,7 +56,7 @@ export default function DataSources() {
     try {
       setLoading(true)
       const result = await dataSourceService.getAll(currentPage, itemsPerPage)
-      setDataSources(result.data)
+      setDataSources(result.items)
       setTotalItems(result.total)
     } catch (error) {
       console.error('Error loading data sources:', error)

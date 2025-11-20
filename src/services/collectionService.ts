@@ -1,93 +1,99 @@
 // Serviço para gerenciar coleções
 
-import { Collection } from '@/types'
+import { Collection, PagedResult } from '@/types'
+import { apiClient } from '@/lib/api'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+// Função auxiliar para formatar data relativa
+function formatRelativeTime(date: string | Date): string {
+  if (!date) return 'Never'
+  
+  const dateObj = typeof date === 'string' ? new Date(date) : date
+  const now = new Date()
+  const diffMs = now.getTime() - dateObj.getTime()
+  const diffMins = Math.floor(diffMs / 60000)
+  const diffHours = Math.floor(diffMs / 3600000)
+  const diffDays = Math.floor(diffMs / 86400000)
+
+  if (diffMins < 1) return 'Just now'
+  if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`
+  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`
+  return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`
+}
+
+// Função auxiliar para transformar Collection do backend para formato da UI
+function transformCollection(collection: any): Collection {
+  return {
+    ...collection,
+    status: collection.isActive ? 'active' : 'error',
+    owner: collection.owner?.username || 'Unknown',
+    lastScan: collection.updatedAt ? formatRelativeTime(collection.updatedAt) : 'Never',
+  }
+}
 
 export const collectionService = {
-  async getAll(): Promise<Collection[]> {
-    // Por enquanto, retorna dados mockados
-    // Quando a API estiver pronta, substituir por:
-    // const response = await fetch(`${API_BASE_URL}/api/collections`)
-    // return response.json()
+  async getAll(page?: number, pageSize?: number, search?: string): Promise<PagedResult<Collection>> {
+    const result = await apiClient.get<PagedResult<any>>('/api/collections', {
+      page,
+      pageSize,
+      search,
+    })
 
-    return [
-      {
-        id: '1',
-        name: 'Marketing Analytics Q3',
-        description: 'Tracks customer engagement and campaign performance.',
-        status: 'active',
-        dataSourcesCount: 5,
-        owner: 'Alex Chen',
-        lastScan: '2 hours ago',
-      },
-      {
-        id: '2',
-        name: 'Production Server Logs',
-        description: 'Real-time logs from production environment servers.',
-        status: 'indexing',
-        dataSourcesCount: 12,
-        owner: 'Maria Garcia',
-        lastScan: '15 minutes ago',
-      },
-      {
-        id: '3',
-        name: 'User Behavior Tracking',
-        description: 'Aggregated user interaction data from web app.',
-        status: 'error',
-        dataSourcesCount: 3,
-        owner: 'Alex Chen',
-        lastScan: '1 day ago',
-      },
-    ]
+    return {
+      ...result,
+      items: result.items.map(transformCollection),
+    }
   },
 
   async getById(id: string): Promise<Collection | null> {
-    const collections = await this.getAll()
-    return collections.find(c => c.id === id) || null
+    try {
+      const collection = await apiClient.get<any>(`/api/collections/${id}`)
+      return transformCollection(collection)
+    } catch (error) {
+      console.error('Error fetching collection:', error)
+      return null
+    }
   },
 
-  async create(collection: Omit<Collection, 'id' | 'status' | 'dataSourcesCount' | 'owner' | 'lastScan'>): Promise<Collection> {
-    // Implementar chamada à API quando disponível
-    // const response = await fetch(`${API_BASE_URL}/api/collections`, {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(collection),
-    // })
-    // return response.json()
-
-    // Mock para desenvolvimento
-    const newCollection: Collection = {
-      id: Date.now().toString(),
-      ...collection,
-      status: 'active',
-      dataSourcesCount: 0,
-      owner: 'Current User', // Será substituído pelo backend
-      lastScan: 'Just now',
-    }
-    return newCollection
+  async create(collection: { name: string; description?: string }): Promise<Collection> {
+    const created = await apiClient.post<any>('/api/collections', {
+      name: collection.name,
+      description: collection.description,
+    })
+    return transformCollection(created)
   },
 
-  async update(id: string, collection: Partial<Omit<Collection, 'id'>>): Promise<Collection> {
-    // Implementar chamada à API quando disponível
-    // const response = await fetch(`${API_BASE_URL}/api/collections/${id}`, {
-    //   method: 'PUT',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(collection),
-    // })
-    // return response.json()
-
-    // Mock para desenvolvimento
-    const existing = await this.getById(id)
-    if (!existing) {
-      throw new Error('Collection not found')
-    }
-    return { ...existing, ...collection }
+  async update(id: string, collection: { name?: string; description?: string }): Promise<Collection> {
+    const updated = await apiClient.put<any>(`/api/collections/${id}`, {
+      name: collection.name,
+      description: collection.description,
+    })
+    return transformCollection(updated)
   },
 
   async delete(id: string): Promise<void> {
-    // Implementar chamada à API quando disponível
-    // await fetch(`${API_BASE_URL}/api/collections/${id}`, { method: 'DELETE' })
+    await apiClient.delete(`/api/collections/${id}`)
+  },
+
+  async getDataSources(collectionId: string): Promise<any[]> {
+    return apiClient.get<any[]>(`/api/collections/${collectionId}/datasources`)
+  },
+
+  async associateDataSource(collectionId: string, dataSourceId: string): Promise<void> {
+    await apiClient.post(`/api/collections/${collectionId}/datasources`, {
+      dataSourceId,
+    })
+  },
+
+  async disassociateDataSource(collectionId: string, dataSourceId: string): Promise<void> {
+    await apiClient.delete(`/api/collections/${collectionId}/datasources/${dataSourceId}`)
+  },
+
+  async getRelationships(collectionId: string): Promise<any[]> {
+    return apiClient.get<any[]>(`/api/collections/${collectionId}/relationships`)
+  },
+
+  async discoverRelationships(collectionId: string): Promise<any[]> {
+    return apiClient.post<any[]>(`/api/collections/${collectionId}/discover-relationships`)
   },
 }
 

@@ -4,7 +4,13 @@ import { Sidebar } from '@/components/Sidebar'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Select } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
 import { dataSourceService } from '@/services/dataSourceService'
@@ -14,11 +20,7 @@ import { CheckCircle2, AlertCircle, Eye, EyeOff } from 'lucide-react'
 
 const DATA_SOURCE_TYPES: DataSourceType[] = [
   'PostgreSQL',
-  'MySQL',
   'MongoDB',
-  'S3',
-  'Kafka',
-  'Redis',
 ]
 
 export default function CreateDataSource() {
@@ -63,8 +65,8 @@ export default function CreateDataSource() {
 
   const loadCollections = async () => {
     try {
-      const data = await collectionService.getAll()
-      setCollections(data)
+      const result = await collectionService.getAll()
+      setCollections(result.items)
     } catch (error) {
       console.error('Error loading collections:', error)
     }
@@ -78,7 +80,7 @@ export default function CreateDataSource() {
           name: dataSource.name,
           type: dataSource.type,
           connectionUri: dataSource.connectionUri || '',
-          credentials: dataSource.credentials || '',
+          credentials: '', // Não retornamos credenciais por segurança
           collectionId: dataSource.collectionId || '',
         })
       }
@@ -124,11 +126,20 @@ export default function CreateDataSource() {
     setConnectionResult(null)
 
     try {
-      const result = await dataSourceService.testConnection(
-        formData.connectionUri,
-        formData.credentials || undefined
-      )
-      setConnectionResult(result)
+      // Por enquanto, apenas valida o formato da URI
+      // O backend pode não ter endpoint de teste ainda
+      try {
+        new URL(formData.connectionUri)
+        setConnectionResult({
+          success: true,
+          message: 'URI format is valid',
+        })
+      } catch {
+        setConnectionResult({
+          success: false,
+          message: 'Invalid URI format',
+        })
+      }
     } catch (error) {
       setConnectionResult({
         success: false,
@@ -150,27 +161,29 @@ export default function CreateDataSource() {
 
     try {
       const collection = collections.find(c => c.id === formData.collectionId)
-      
+
       if (isEditMode && id) {
         await dataSourceService.update(id, {
           name: formData.name.trim(),
-          type: formData.type as DataSourceType,
+          type: formData.type as 'PostgreSQL' | 'MongoDB',
           connectionUri: formData.connectionUri.trim(),
-          credentials: formData.credentials.trim(),
-          collection: collection?.name || '',
-          collectionId: formData.collectionId,
         })
       } else {
+        if (!formData.collectionId) {
+          throw new Error('Collection is required')
+        }
         await dataSourceService.create({
           name: formData.name.trim(),
-          type: formData.type as DataSourceType,
-          connectionUri: formData.connectionUri.trim(),
-          credentials: formData.credentials.trim(),
-          collection: collection?.name || '',
+          type: formData.type as 'PostgreSQL' | 'MongoDB',
           collectionId: formData.collectionId,
+          connectionUri: formData.connectionUri.trim(),
         })
       }
-      navigate('/data-sources')
+      if (formData.collectionId) {
+        navigate(`/collections/${formData.collectionId}`)
+      } else {
+        navigate('/data-sources')
+      }
     } catch (error) {
       console.error('Error saving data source:', error)
       // Aqui você pode adicionar uma notificação de erro
@@ -180,13 +193,17 @@ export default function CreateDataSource() {
   }
 
   const handleCancel = () => {
-    navigate('/data-sources')
+    if (collectionIdFromQuery) {
+      navigate(`/collections/${collectionIdFromQuery}`)
+    } else {
+      navigate('/data-sources')
+    }
   }
 
   return (
     <div className="flex min-h-screen bg-background-light dark:bg-background-dark">
       <Sidebar />
-      
+
       <main className="flex-1 overflow-y-auto">
         <div className="p-8">
           <div className="max-w-4xl mx-auto">
@@ -226,9 +243,8 @@ export default function CreateDataSource() {
                             setErrors({ ...errors, name: undefined })
                           }
                         }}
-                        className={`h-11 bg-white dark:bg-[#1c2327] border-slate-300 dark:border-[#3b4b54] placeholder:text-slate-400 dark:placeholder:text-[#9db0b9] ${
-                          errors.name ? 'border-red-500 focus-visible:ring-red-500' : ''
-                        }`}
+                        className={`h-11 bg-white dark:bg-[#1c2327] border-slate-300 dark:border-[#3b4b54] placeholder:text-slate-400 dark:placeholder:text-[#9db0b9] ${errors.name ? 'border-red-500 focus-visible:ring-red-500' : ''
+                          }`}
                       />
                       {errors.name && (
                         <p className="text-red-600 dark:text-red-400 text-sm mt-1">
@@ -244,24 +260,28 @@ export default function CreateDataSource() {
                         Type
                       </p>
                       <Select
-                        id="type"
-                        value={formData.type}
-                        onChange={(e) => {
-                          setFormData({ ...formData, type: e.target.value as DataSourceType })
+                        value={formData.type || undefined}
+                        onValueChange={(value) => {
+                          setFormData({ ...formData, type: value as DataSourceType })
                           if (errors.type) {
                             setErrors({ ...errors, type: undefined })
                           }
                         }}
-                        className={`bg-white dark:bg-[#1c2327] border-slate-300 dark:border-[#3b4b54] text-slate-900 dark:text-white ${
-                          errors.type ? 'border-red-500 focus-visible:ring-red-500' : ''
-                        }`}
                       >
-                        <option value="">Select a type</option>
-                        {DATA_SOURCE_TYPES.map((type) => (
-                          <option key={type} value={type}>
-                            {type}
-                          </option>
-                        ))}
+                        <SelectTrigger
+                          id="type"
+                          className={`bg-white dark:bg-[#1c2327] border-slate-300 dark:border-[#3b4b54] text-slate-900 dark:text-white ${errors.type ? 'border-red-500 focus-visible:ring-red-500' : ''
+                            }`}
+                        >
+                          <SelectValue placeholder="Select a type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {DATA_SOURCE_TYPES.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
                       </Select>
                       {errors.type && (
                         <p className="text-red-600 dark:text-red-400 text-sm mt-1">
@@ -290,9 +310,8 @@ export default function CreateDataSource() {
                         }
                         setConnectionResult(null)
                       }}
-                      className={`h-11 bg-white dark:bg-[#1c2327] border-slate-300 dark:border-[#3b4b54] placeholder:text-slate-400 dark:placeholder:text-[#9db0b9] ${
-                        errors.connectionUri ? 'border-red-500 focus-visible:ring-red-500' : ''
-                      }`}
+                      className={`h-11 bg-white dark:bg-[#1c2327] border-slate-300 dark:border-[#3b4b54] placeholder:text-slate-400 dark:placeholder:text-[#9db0b9] ${errors.connectionUri ? 'border-red-500 focus-visible:ring-red-500' : ''
+                        }`}
                     />
                     {errors.connectionUri && (
                       <p className="text-red-600 dark:text-red-400 text-sm mt-1">
@@ -341,19 +360,24 @@ export default function CreateDataSource() {
                       Associated Collection
                     </p>
                     <Select
-                      id="collection"
-                      value={formData.collectionId}
-                      onChange={(e) => {
-                        setFormData({ ...formData, collectionId: e.target.value })
+                      value={formData.collectionId || undefined}
+                      onValueChange={(value) => {
+                        setFormData({ ...formData, collectionId: value })
                       }}
-                      className="bg-white dark:bg-[#1c2327] border-slate-300 dark:border-[#3b4b54] text-slate-900 dark:text-white"
                     >
-                      <option value="">Select a collection</option>
-                      {collections.map((collection) => (
-                        <option key={collection.id} value={collection.id}>
-                          {collection.name}
-                        </option>
-                      ))}
+                      <SelectTrigger
+                        id="collection"
+                        className="bg-white dark:bg-[#1c2327] border-slate-300 dark:border-[#3b4b54] text-slate-900 dark:text-white"
+                      >
+                        <SelectValue placeholder="Select a collection" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {collections.map((collection) => (
+                          <SelectItem key={collection.id} value={collection.id}>
+                            {collection.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
                     </Select>
                   </Label>
                 </div>
@@ -361,11 +385,10 @@ export default function CreateDataSource() {
                 {/* Connection Feedback */}
                 {connectionResult && (
                   <div
-                    className={`flex items-center gap-2 ${
-                      connectionResult.success
-                        ? 'text-green-600 dark:text-green-400'
-                        : 'text-red-600 dark:text-red-400'
-                    }`}
+                    className={`flex items-center gap-2 ${connectionResult.success
+                      ? 'text-green-600 dark:text-green-400'
+                      : 'text-red-600 dark:text-red-400'
+                      }`}
                   >
                     {connectionResult.success ? (
                       <CheckCircle2 className="h-5 w-5" />

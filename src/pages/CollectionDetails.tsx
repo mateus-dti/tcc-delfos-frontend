@@ -17,7 +17,7 @@ import {
 import { collectionService } from '@/services/collectionService'
 import { dataSourceService } from '@/services/dataSourceService'
 import { Collection, DataSource } from '@/types'
-import { Plus, Edit, Trash2, Sparkles, TableRows } from 'lucide-react'
+import { Plus, Sparkles, Table2 } from 'lucide-react'
 
 type TabValue = 'general' | 'data-sources' | 'relationships' | 'model-preferences'
 
@@ -62,10 +62,15 @@ export default function CollectionDetails() {
 
   const loadDataSources = async (collectionId: string) => {
     try {
-      const result = await dataSourceService.getAll(1, 1000)
-      // Filtrar data sources desta coleção
-      const filtered = result.data.filter(ds => ds.collectionId === collectionId)
-      setDataSources(filtered)
+      const dataSources = await collectionService.getDataSources(collectionId)
+      // Transformar os dados para o formato esperado pela UI
+      const transformed = dataSources.map((ds: any) => ({
+        ...ds,
+        status: ds.isActive ? 'active' : 'disabled',
+        lastSynced: ds.lastScannedAt || 'Never',
+        lastScan: ds.lastScannedAt || 'Never',
+      }))
+      setDataSources(transformed)
     } catch (error) {
       console.error('Error loading data sources:', error)
     }
@@ -90,9 +95,18 @@ export default function CollectionDetails() {
     }
   }
 
-  const handleDiscoverRelationships = () => {
-    // Implementar funcionalidade de descobrir relacionamentos
-    console.log('Discover relationships')
+  const handleDiscoverRelationships = async () => {
+    if (!id) return
+    
+    try {
+      await collectionService.discoverRelationships(id)
+      // Recarregar relacionamentos após descobrir
+      // TODO: Implementar carregamento de relacionamentos
+      alert('Relacionamentos descobertos com sucesso!')
+    } catch (error) {
+      console.error('Error discovering relationships:', error)
+      alert('Erro ao descobrir relacionamentos')
+    }
   }
 
   const handleAddDataSource = () => {
@@ -193,17 +207,21 @@ export default function CollectionDetails() {
                       <dt className="text-sm font-medium text-slate-600 dark:text-[#9db0b9]">Status</dt>
                       <dd className="mt-1">
                         <Badge variant={collection.status === 'active' ? 'success' : collection.status === 'error' ? 'destructive' : 'warning'}>
-                          {collection.status}
+                          {collection.status || (collection.isActive ? 'active' : 'inactive')}
                         </Badge>
                       </dd>
                     </div>
                     <div>
                       <dt className="text-sm font-medium text-slate-600 dark:text-[#9db0b9]">Owner</dt>
-                      <dd className="mt-1 text-sm text-slate-900 dark:text-[#E0E0E0]">{collection.owner}</dd>
+                      <dd className="mt-1 text-sm text-slate-900 dark:text-[#E0E0E0]">
+                        {typeof collection.owner === 'string' 
+                          ? collection.owner 
+                          : collection.owner?.username || 'Unknown'}
+                      </dd>
                     </div>
                     <div>
                       <dt className="text-sm font-medium text-slate-600 dark:text-[#9db0b9]">Data Sources</dt>
-                      <dd className="mt-1 text-sm text-slate-900 dark:text-[#E0E0E0]">{collection.dataSourcesCount}</dd>
+                      <dd className="mt-1 text-sm text-slate-900 dark:text-[#E0E0E0]">{collection.dataSourcesCount || 0}</dd>
                     </div>
                     <div className="md:col-span-2">
                       <dt className="text-sm font-medium text-slate-600 dark:text-[#9db0b9]">Description</dt>
@@ -213,7 +231,7 @@ export default function CollectionDetails() {
                     </div>
                     <div>
                       <dt className="text-sm font-medium text-slate-600 dark:text-[#9db0b9]">Last Scan</dt>
-                      <dd className="mt-1 text-sm text-slate-900 dark:text-[#E0E0E0]">{collection.lastScan}</dd>
+                      <dd className="mt-1 text-sm text-slate-900 dark:text-[#E0E0E0]">{collection.lastScan || 'Never'}</dd>
                     </div>
                   </dl>
                 </div>
@@ -267,14 +285,15 @@ export default function CollectionDetails() {
                       </TableHeader>
                       <TableBody>
                         {dataSources.map((dataSource) => {
-                          const statusConfig = dataSourceStatusConfig[dataSource.status.toLowerCase()] || 
-                            { variant: 'default' as const, label: dataSource.status }
+                          const status = (dataSource.status || 'pending').toLowerCase()
+                          const statusConfig = dataSourceStatusConfig[status] || 
+                            { variant: 'default' as const, label: dataSource.status || 'Unknown' }
                           
                           return (
                             <TableRow key={dataSource.id}>
                               <TableCell className="whitespace-nowrap">
                                 <div className="flex items-center gap-3">
-                                  <TableRows className="h-6 w-6 text-[#50E3C2]" />
+                                  <Table2 className="h-6 w-6 text-[#50E3C2]" />
                                   <div>
                                     <div className="text-sm font-medium text-slate-900 dark:text-[#E0E0E0]">
                                       {dataSource.name}

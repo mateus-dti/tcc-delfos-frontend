@@ -17,6 +17,7 @@ export function Sidebar() {
     { label: 'Dashboard', href: '/dashboard', icon: 'dashboard' },
     { label: 'Data Collections', href: '/collections', icon: 'folder' },
     { label: 'Data Sources', href: '/data-sources', icon: 'database' },
+    { label: 'AI Models', href: '/models', icon: 'psychology' },
     { label: 'Query', href: '/query', icon: 'code' },
     { label: 'Settings', href: '/settings', icon: 'settings' },
   ]

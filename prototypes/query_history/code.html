@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Query History - Delfos</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#13a4ec",
+            "background-light": "#f6f7f8",
+            "background-dark": "#101c22",
+          },
+          fontFamily: {
+            "display": ["Manrope", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Manrope', sans-serif;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex min-h-screen w-full">
+<!-- SideNavBar -->
+<aside class="flex h-screen w-64 flex-col bg-[#111618] p-4 sticky top-0">
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-3 px-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Delfos logo, an abstract geometric shape" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDy2sSMlsIDLrQ2MUFw-tBthMYPnjG6LwOC8upQJqNV0QE7og2-EpFwGhlCkzHEhvOxANY5cHnXejqaa6RYdOU6VvPnoVcxWYEENZ7Nr2duAMeM78SyNdcnb3UxMs1iAYCQ775A41Lkk6HOQiqNSSnqLRN7r0er--t4lp5ExlWVtmM7EDlIAnC331kTfrMUZj7TjV9_S8clioyPDl8pUWKubdgo9HO3zOphY7e4I_Xfimh-jba3WESM_N5yOjH3c9HBeVbXhtphtco");'></div>
+<div class="flex flex-col">
+<h1 class="text-white text-base font-medium leading-normal">Delfos</h1>
+<p class="text-[#9db0b9] text-sm font-normal leading-normal">Data Assistant</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2 mt-4">
+<a class="flex items-center gap-3 px-3 py-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg" href="#">
+<span class="material-symbols-outlined text-2xl">grid_view</span>
+<p class="text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-primary" href="#">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+<p class="text-sm font-medium leading-normal">Natural Language Query</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg" href="#">
+<span class="material-symbols-outlined text-2xl">inventory_2</span>
+<p class="text-sm font-medium leading-normal">Collections</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg" href="#">
+<span class="material-symbols-outlined text-2xl">database</span>
+<p class="text-sm font-medium leading-normal">Data Sources</p>
+</a>
+</nav>
+</div>
+<div class="mt-auto flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg" href="#">
+<span class="material-symbols-outlined text-2xl">settings</span>
+<p class="text-sm font-medium leading-normal">Settings</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg" href="#">
+<span class="material-symbols-outlined text-2xl">logout</span>
+<p class="text-sm font-medium leading-normal">Log Out</p>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 p-8">
+<div class="w-full max-w-7xl mx-auto">
+<!-- Breadcrumbs -->
+<div class="flex flex-wrap gap-2 mb-4">
+<a class="text-gray-500 dark:text-[#9db0b9] text-sm font-medium leading-normal" href="#">Natural Language Query</a>
+<span class="text-gray-500 dark:text-[#9db0b9] text-sm font-medium leading-normal">/</span>
+<span class="text-gray-800 dark:text-white text-sm font-medium leading-normal">Query History</span>
+</div>
+<!-- PageHeading -->
+<div class="flex flex-wrap justify-between gap-3 mb-8">
+<div class="flex min-w-72 flex-col gap-2">
+<h1 class="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Query History</h1>
+<p class="text-gray-600 dark:text-[#9db0b9] text-base font-normal leading-normal">Review and manage your past natural language queries.</p>
+</div>
+<button class="flex items-center justify-center gap-2 h-11 px-6 rounded-lg bg-primary text-white font-semibold text-sm">
+<span class="material-symbols-outlined text-xl">add</span>
+            New Query
+          </button>
+</div>
+<!-- Filters Section -->
+<div class="flex flex-col gap-4 p-6 rounded-xl bg-white dark:bg-[#111618] border border-gray-200 dark:border-[#3b4b54]">
+<h3 class="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Filters</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<label class="flex flex-col">
+<p class="text-gray-700 dark:text-white text-sm font-medium leading-normal pb-2">Collection</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-[#3b4b54] bg-white dark:bg-[#1c2327] focus:border-primary h-12 placeholder:text-gray-500 dark:placeholder:text-[#9db0b9] px-4 text-sm font-normal leading-normal" placeholder="Select Collection" value=""/>
+</label>
+<label class="flex flex-col">
+<p class="text-gray-700 dark:text-white text-sm font-medium leading-normal pb-2">Model</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-[#3b4b54] bg-white dark:bg-[#1c2327] focus:border-primary h-12 placeholder:text-gray-500 dark:placeholder:text-[#9db0b9] px-4 text-sm font-normal leading-normal" placeholder="Select Model" value=""/>
+</label>
+<label class="flex flex-col">
+<p class="text-gray-700 dark:text-white text-sm font-medium leading-normal pb-2">Status</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-[#3b4b54] bg-white dark:bg-[#1c2327] focus:border-primary h-12 placeholder:text-gray-500 dark:placeholder:text-[#9db0b9] px-4 text-sm font-normal leading-normal" placeholder="Any Status" value=""/>
+</label>
+<label class="flex flex-col">
+<p class="text-gray-700 dark:text-white text-sm font-medium leading-normal pb-2">Date Range</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-[#3b4b54] bg-white dark:bg-[#1c2327] focus:border-primary h-12 placeholder:text-gray-500 dark:placeholder:text-[#9db0b9] px-4 text-sm font-normal leading-normal" placeholder="Select Date Range" value=""/>
+</label>
+</div>
+<div class="flex items-center justify-end gap-3 mt-2">
+<button class="h-10 px-5 rounded-lg text-gray-600 dark:text-[#9db0b9] font-semibold text-sm hover:bg-gray-100 dark:hover:bg-white/10">Clear All</button>
+<button class="h-10 px-5 rounded-lg bg-primary text-white font-semibold text-sm">Apply Filters</button>
+</div>
+</div>
+<!-- Data Table -->
+<div class="mt-8 overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="border-b border-gray-200 dark:border-[#3b4b54]">
+<th class="p-4 text-sm font-semibold text-gray-600 dark:text-[#9db0b9]">Query</th>
+<th class="p-4 text-sm font-semibold text-gray-600 dark:text-[#9db0b9]">Collection</th>
+<th class="p-4 text-sm font-semibold text-gray-600 dark:text-[#9db0b9]">Model</th>
+<th class="p-4 text-sm font-semibold text-gray-600 dark:text-[#9db0b9]">Status</th>
+<th class="p-4 text-sm font-semibold text-gray-600 dark:text-[#9db0b9]">Submitted Date</th>
+<th class="p-4 text-sm font-semibold text-gray-600 dark:text-[#9db0b9] text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-200 dark:divide-[#3b4b54]">
+<tr>
+<td class="p-4 text-sm text-gray-800 dark:text-white max-w-xs truncate">Show me total sales by region for last quarter...</td>
+<td class="p-4 text-sm text-gray-600 dark:text-[#9db0b9]">Sales Data</td>
+<td class="p-4 text-sm text-gray-600 dark:text-[#9db0b9]">Q4_Sales_v2</td>
+<td class="p-4 text-sm">
+<span class="inline-flex items-center gap-1.5 rounded-full bg-green-100 dark:bg-green-500/20 px-2 py-1 text-xs font-medium text-green-700 dark:text-green-400">
+<span class="size-1.5 rounded-full bg-green-500"></span>
+                    Succeeded
+                  </span>
+</td>
+<td class="p-4 text-sm text-gray-600 dark:text-[#9db0b9]">2023-10-28 14:30</td>
+<td class="p-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10" title="View Details">
+<span class="material-symbols-outlined text-xl text-gray-600 dark:text-[#9db0b9]">visibility</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10" title="Re-execute Query">
+<span class="material-symbols-outlined text-xl text-gray-600 dark:text-[#9db0b9]">replay</span>
+</button>
+</div>
+</td>
+</tr>
+<tr>
+<td class="p-4 text-sm text-gray-800 dark:text-white max-w-xs truncate">List all users who signed up in the last 30 days.</td>
+<td class="p-4 text-sm text-gray-600 dark:text-[#9db0b9]">User Analytics</td>
+<td class="p-4 text-sm text-gray-600 dark:text-[#9db0b9]">User_Growth_v1</td>
+<td class="p-4 text-sm">
+<span class="inline-flex items-center gap-1.5 rounded-full bg-red-100 dark:bg-red-500/20 px-2 py-1 text-xs font-medium text-red-700 dark:text-red-400">
+<span class="size-1.5 rounded-full bg-red-500"></span>
+                    Failed
+                  </span>
+</td>
+<td class="p-4 text-sm text-gray-600 dark:text-[#9db0b9]">2023-10-27 11:05</td>
+<td class="p-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10" title="View Details">
+<span class="material-symbols-outlined text-xl text-gray-600 dark:text-[#9db0b9]">visibility</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10" title="Re-execute Query">
+<span class="material-symbols-outlined text-xl text-gray-600 dark:text-[#9db0b9]">replay</span>
+</button>
+</div>
+</td>
+</tr>
+<tr>
+<td class="p-4 text-sm text-gray-800 dark:text-white max-w-xs truncate">What is the average session duration for mobile users?</td>
+<td class="p-4 text-sm text-gray-600 dark:text-[#9db0b9]">Web Traffic</td>
+<td class="p-4 text-sm text-gray-600 dark:text-[#9db0b9]">Traffic_Analysis_v3</td>
+<td class="p-4 text-sm">
+<span class="inline-flex items-center gap-1.5 rounded-full bg-amber-100 dark:bg-amber-500/20 px-2 py-1 text-xs font-medium text-amber-800 dark:text-amber-400">
+<span class="size-1.5 rounded-full bg-amber-500"></span>
+                    Running
+                  </span>
+</td>
+<td class="p-4 text-sm text-gray-600 dark:text-[#9db0b9]">2023-10-26 09:15</td>
+<td class="p-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10" title="View Details">
+<span class="material-symbols-outlined text-xl text-gray-600 dark:text-[#9db0b9]">visibility</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10" title="Re-execute Query">
+<span class="material-symbols-outlined text-xl text-gray-600 dark:text-[#9db0b9]">replay</span>
+</button>
+</div>
+</td>
+</tr>
+<tr>
+<td class="p-4 text-sm text-gray-800 dark:text-white max-w-xs truncate">Compare marketing spend vs conversion rate by channel.</td>
+<td class="p-4 text-sm text-gray-600 dark:text-[#9db0b9]">Marketing Data</td>
+<td class="p-4 text-sm text-gray-600 dark:text-[#9db0b9]">Campaign_ROI_v4</td>
+<td class="p-4 text-sm">
+<span class="inline-flex items-center gap-1.5 rounded-full bg-green-100 dark:bg-green-500/20 px-2 py-1 text-xs font-medium text-green-700 dark:text-green-400">
+<span class="size-1.5 rounded-full bg-green-500"></span>
+                    Succeeded
+                  </span>
+</td>
+<td class="p-4 text-sm text-gray-600 dark:text-[#9db0b9]">2023-10-25 18:00</td>
+<td class="p-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10" title="View Details">
+<span class="material-symbols-outlined text-xl text-gray-600 dark:text-[#9db0b9]">visibility</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10" title="Re-execute Query">
+<span class="material-symbols-outlined text-xl text-gray-600 dark:text-[#9db0b9]">replay</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="flex items-center justify-between mt-8">
+<div class="text-sm text-gray-600 dark:text-[#9db0b9]">
+            Showing <span class="font-semibold text-gray-800 dark:text-white">1</span> to <span class="font-semibold text-gray-800 dark:text-white">10</span> of <span class="font-semibold text-gray-800 dark:text-white">97</span> results
+          </div>
+<div class="flex items-center gap-2">
+<button class="flex items-center justify-center size-9 rounded-lg border border-gray-300 dark:border-[#3b4b54] hover:bg-gray-100 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-xl text-gray-600 dark:text-[#9db0b9]">chevron_left</span>
+</button>
+<button class="flex items-center justify-center size-9 rounded-lg bg-primary/20 text-primary font-semibold">1</button>
+<button class="flex items-center justify-center size-9 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-600 dark:text-[#9db0b9]">2</button>
+<button class="flex items-center justify-center size-9 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-600 dark:text-[#9db0b9]">3</button>
+<span class="text-gray-600 dark:text-[#9db0b9]">...</span>
+<button class="flex items-center justify-center size-9 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-600 dark:text-[#9db0b9]">10</button>
+<button class="flex items-center justify-center size-9 rounded-lg border border-gray-300 dark:border-[#3b4b54] hover:bg-gray-100 dark:hover:bg-white/10">
+<span class="material-symbols-outlined text-xl text-gray-600 dark:text-[#9db0b9]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

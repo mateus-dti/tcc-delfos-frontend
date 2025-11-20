@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Sidebar } from '@/components/Sidebar'
-import { ThemeToggle } from '@/components/ThemeToggle'
 import { CollectionCard } from '@/components/CollectionCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,7 +14,7 @@ import { collectionService } from '@/services/collectionService'
 import { Collection, CollectionStatus } from '@/types'
 import { Search, PlusCircle } from 'lucide-react'
 
-export default function Collections() {
+export default function Dashboard() {
   const navigate = useNavigate()
   const [collections, setCollections] = useState<Collection[]>([])
   const [filteredCollections, setFilteredCollections] = useState<Collection[]>([])
@@ -106,7 +105,7 @@ export default function Collections() {
       
       <main className="flex-1 p-8 overflow-y-auto">
         <div className="w-full max-w-7xl mx-auto">
-          {/* Header */}
+          {/* Page Heading */}
           <header className="flex flex-wrap justify-between items-center gap-4 mb-6">
             <div className="flex flex-col gap-1">
               <h1 className="text-slate-900 dark:text-white text-3xl font-extrabold leading-tight tracking-tight">
@@ -116,44 +115,41 @@ export default function Collections() {
                 Manage, monitor, and query your data collections.
               </p>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="hidden sm:block">
-                <ThemeToggle />
-              </div>
-              <Button
-                onClick={handleCreateCollection}
-                className="h-10 px-5 bg-primary hover:bg-primary/90 text-white text-sm font-bold gap-2"
-              >
-                <PlusCircle className="h-5 w-5" />
-                <span className="truncate">Create New Collection</span>
-              </Button>
-            </div>
+            <Button
+              onClick={handleCreateCollection}
+              className="flex min-w-[84px] h-10 px-5 bg-primary hover:bg-primary/90 text-white text-sm font-bold leading-normal tracking-wide gap-2"
+            >
+              <PlusCircle className="h-5 w-5" />
+              <span className="truncate">Create New Collection</span>
+            </Button>
           </header>
 
-          {/* Action Bar - Search and Filters */}
+          {/* Action Bar */}
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
             {/* Search Bar */}
             <div className="flex-grow">
-              <div className="flex w-full items-stretch rounded-lg h-10 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus-within:ring-2 focus-within:ring-primary/50">
-                <div className="text-slate-400 dark:text-slate-500 flex items-center justify-center pl-3">
-                  <Search className="h-5 w-5" />
+              <label className="flex flex-col w-full">
+                <div className="flex w-full flex-1 items-stretch rounded-lg h-10 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 focus-within:ring-2 focus-within:ring-primary/50">
+                  <div className="text-slate-400 dark:text-slate-500 flex items-center justify-center pl-3">
+                    <Search className="h-5 w-5" />
+                  </div>
+                  <Input
+                    type="text"
+                    placeholder="Search collections by name..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="flex w-full min-w-0 flex-1 resize-none overflow-hidden text-slate-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-transparent h-full placeholder:text-slate-400 dark:placeholder:text-slate-500 px-2 text-sm"
+                  />
                 </div>
-                <Input
-                  type="text"
-                  placeholder="Search collections by name..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="border-0 bg-transparent focus-visible:ring-0 h-full px-2 text-sm"
-                />
-              </div>
+              </label>
             </div>
 
-            {/* Filters */}
+            {/* Chips/Filters */}
             <div className="flex items-center gap-2">
               <DropdownMenu>
                 <DropdownMenuButton 
                   icon="task_alt"
-                  label={`Status: ${statusFilter === 'all' ? 'All' : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}`} 
+                  label={`Status: ${statusFilter === 'all' ? 'All' : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}`}
                 />
                 <DropdownMenuContent>
                   <DropdownMenuItem
@@ -186,7 +182,7 @@ export default function Collections() {
               <DropdownMenu>
                 <DropdownMenuButton 
                   icon="person"
-                  label={`Owner: ${ownerFilter === 'all' ? 'All' : ownerFilter}`} 
+                  label={`Owner: ${ownerFilter === 'all' ? 'All' : ownerFilter}`}
                 />
                 <DropdownMenuContent>
                   <DropdownMenuItem
@@ -209,7 +205,7 @@ export default function Collections() {
             </div>
           </div>
 
-          {/* Collections Grid */}
+          {/* Data Collection List */}
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <p className="text-slate-500 dark:text-slate-400">Loading collections...</p>

@@ -13,8 +13,9 @@ const DropdownMenuButton = React.forwardRef<
   React.ButtonHTMLAttributes<HTMLButtonElement> & {
     label: string
     value?: string
+    icon?: string
   }
->(({ className, label, value, ...props }, ref) => (
+>(({ className, label, value, icon, ...props }, ref) => (
   <DropdownMenuTrigger asChild>
     <button
       ref={ref}
@@ -24,6 +25,11 @@ const DropdownMenuButton = React.forwardRef<
       )}
       {...props}
     >
+      {icon && (
+        <span className="material-symbols-outlined text-xl text-slate-500 dark:text-slate-400">
+          {icon}
+        </span>
+      )}
       <span className="text-slate-800 dark:text-slate-300 text-sm font-medium leading-normal">
         {label}
       </span>

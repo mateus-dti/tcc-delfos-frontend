@@ -18,7 +18,10 @@ const statusConfig: Record<CollectionStatus, { variant: 'success' | 'warning' | 
 }
 
 export function CollectionCard({ collection, onView, onEdit, onDelete }: CollectionCardProps) {
-  const status = statusConfig[collection.status]
+  const status = statusConfig[collection.status || 'active']
+  const owner = typeof collection.owner === 'string' 
+    ? collection.owner 
+    : collection.owner?.username || 'Unknown'
 
   return (
     <div className="flex flex-col bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:shadow-md hover:-translate-y-1">
@@ -42,16 +45,16 @@ export function CollectionCard({ collection, onView, onEdit, onDelete }: Collect
         <div className="flex items-center gap-3 text-slate-600 dark:text-slate-300">
           <Database className="h-5 w-5 text-slate-400 dark:text-slate-500" />
           <span>
-            <span className="font-semibold">{collection.dataSourcesCount}</span> Data Sources
+            <span className="font-semibold">{collection.dataSourcesCount || 0}</span> Data Sources
           </span>
         </div>
         <div className="flex items-center gap-3 text-slate-600 dark:text-slate-300">
           <User className="h-5 w-5 text-slate-400 dark:text-slate-500" />
-          <span>Owner: {collection.owner}</span>
+          <span>Owner: {owner}</span>
         </div>
         <div className="flex items-center gap-3 text-slate-600 dark:text-slate-300">
           <Clock className="h-5 w-5 text-slate-400 dark:text-slate-500" />
-          <span>Last Scan: {collection.lastScan}</span>
+          <span>Last Scan: {collection.lastScan || 'Never'}</span>
         </div>
       </div>
 

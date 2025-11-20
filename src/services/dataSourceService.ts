@@ -1,162 +1,118 @@
 // Serviço para gerenciar data sources
 
-import { DataSource } from '@/types'
+import { DataSource, PagedResult } from '@/types'
+import { apiClient } from '@/lib/api'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+// Função auxiliar para formatar data relativa
+function formatRelativeTime(date: string | Date | undefined): string {
+  if (!date) return 'Never'
+  
+  const dateObj = typeof date === 'string' ? new Date(date) : date
+  const now = new Date()
+  const diffMs = now.getTime() - dateObj.getTime()
+  const diffMins = Math.floor(diffMs / 60000)
+  const diffHours = Math.floor(diffMs / 3600000)
+  const diffDays = Math.floor(diffMs / 86400000)
+
+  if (diffMins < 1) return 'Just now'
+  if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`
+  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`
+  return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`
+}
+
+// Função auxiliar para transformar DataSource do backend para formato da UI
+function transformDataSource(dataSource: any, collectionName?: string): DataSource {
+  return {
+    ...dataSource,
+    status: dataSource.isActive ? 'active' : 'disabled',
+    collection: collectionName || 'Unknown',
+    lastScan: dataSource.lastScannedAt ? formatRelativeTime(dataSource.lastScannedAt) : 'Never',
+    lastSynced: dataSource.lastScannedAt ? formatRelativeTime(dataSource.lastScannedAt) : 'Never',
+  }
+}
 
 export const dataSourceService = {
-  async getAll(page: number = 1, limit: number = 10): Promise<{ data: DataSource[], total: number }> {
-    // Por enquanto, retorna dados mockados
-    // Quando a API estiver pronta, substituir por:
-    // const response = await fetch(`${API_BASE_URL}/api/data-sources?page=${page}&limit=${limit}`)
-    // return response.json()
+  async getAll(page: number = 1, pageSize: number = 10): Promise<PagedResult<DataSource>> {
+    const result = await apiClient.get<PagedResult<any>>('/api/data-sources', {
+      page,
+      pageSize,
+    })
 
-    const mockData: DataSource[] = [
-      {
-        id: '1',
-        name: 'Production PostgreSQL DB',
-        type: 'PostgreSQL',
-        collection: 'Core Services',
-        status: 'active',
-        lastScan: '2 hours ago',
-      },
-      {
-        id: '2',
-        name: 'Analytics MySQL',
-        type: 'MySQL',
-        collection: 'Marketing Analytics Q3',
-        status: 'active',
-        lastScan: '1 hour ago',
-      },
-      {
-        id: '3',
-        name: 'S3 Bucket - Logs',
-        type: 'S3',
-        collection: 'Production Server Logs',
-        status: 'pending',
-        lastScan: '5 minutes ago',
-      },
-      {
-        id: '4',
-        name: 'Kafka Stream - Events',
-        type: 'Kafka',
-        collection: 'User Behavior Tracking',
-        status: 'error',
-        lastScan: '1 day ago',
-      },
-      {
-        id: '5',
-        name: 'MongoDB - User Data',
-        type: 'MongoDB',
-        collection: 'Core Services',
-        status: 'disabled',
-        lastScan: '3 days ago',
-      },
-      {
-        id: '6',
-        name: 'Redis Cache',
-        type: 'Redis',
-        collection: 'Core Services',
-        status: 'active',
-        lastScan: '30 minutes ago',
-      },
-      {
-        id: '7',
-        name: 'PostgreSQL - Analytics',
-        type: 'PostgreSQL',
-        collection: 'Marketing Analytics Q3',
-        status: 'active',
-        lastScan: '45 minutes ago',
-      },
-      {
-        id: '8',
-        name: 'S3 Bucket - Backups',
-        type: 'S3',
-        collection: 'Production Server Logs',
-        status: 'active',
-        lastScan: '6 hours ago',
-      },
-    ]
-
-    const start = (page - 1) * limit
-    const end = start + limit
-    const paginatedData = mockData.slice(start, end)
+    // Buscar todas as coleções para mapear os nomes
+    const collectionsResponse = await apiClient.get<PagedResult<any>>('/api/collections', {})
+    const collectionsMap = new Map(
+      collectionsResponse.items.map((c: any) => [c.id, c.name])
+    )
 
     return {
-      data: paginatedData,
-      total: mockData.length,
+      ...result,
+      items: result.items.map((ds) => {
+        const collectionName = collectionsMap.get(ds.collectionId) || 'Unknown'
+        return transformDataSource(ds, collectionName)
+      }),
     }
   },
 
   async getById(id: string): Promise<DataSource | null> {
-    const { data } = await this.getAll(1, 1000)
-    return data.find(ds => ds.id === id) || null
-  },
-
-  async create(dataSource: Omit<DataSource, 'id' | 'status' | 'lastScan'>): Promise<DataSource> {
-    // Implementar chamada à API quando disponível
-    // const response = await fetch(`${API_BASE_URL}/api/data-sources`, {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(dataSource),
-    // })
-    // return response.json()
-
-    // Mock para desenvolvimento
-    const newDataSource: DataSource = {
-      id: Date.now().toString(),
-      ...dataSource,
-      status: 'pending',
-      lastScan: 'Just now',
-    }
-    return newDataSource
-  },
-
-  async update(id: string, dataSource: Partial<Omit<DataSource, 'id'>>): Promise<DataSource> {
-    // Implementar chamada à API quando disponível
-    // const response = await fetch(`${API_BASE_URL}/api/data-sources/${id}`, {
-    //   method: 'PUT',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(dataSource),
-    // })
-    // return response.json()
-
-    // Mock para desenvolvimento
-    const existing = await this.getById(id)
-    if (!existing) {
-      throw new Error('Data source not found')
-    }
-    return { ...existing, ...dataSource }
-  },
-
-  async testConnection(connectionUri: string, credentials?: string): Promise<{ success: boolean; message: string }> {
-    // Implementar chamada à API quando disponível
-    // const response = await fetch(`${API_BASE_URL}/api/data-sources/test`, {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ connectionUri, credentials }),
-    // })
-    // return response.json()
-
-    // Mock para desenvolvimento - validação básica de URI
     try {
-      const uri = new URL(connectionUri)
-      // Simula teste de conexão
-      return {
-        success: true,
-        message: 'Connection successful',
-      }
+      const dataSource = await apiClient.get<any>(`/api/data-sources/${id}`)
+      return transformDataSource(dataSource)
     } catch (error) {
-      return {
-        success: false,
-        message: 'Invalid URI format',
-      }
+      console.error('Error fetching data source:', error)
+      return null
     }
+  },
+
+  async create(dataSource: {
+    name: string
+    type: 'PostgreSQL' | 'MongoDB'
+    collectionId: string
+    connectionUri: string
+    metadata?: Record<string, any>
+  }): Promise<DataSource> {
+    const created = await apiClient.post<any>('/api/data-sources', {
+      name: dataSource.name,
+      type: dataSource.type,
+      collectionId: dataSource.collectionId,
+      connectionUri: dataSource.connectionUri,
+      metadata: dataSource.metadata,
+    })
+    return transformDataSource(created)
+  },
+
+  async update(id: string, dataSource: {
+    name?: string
+    type?: 'PostgreSQL' | 'MongoDB'
+    connectionUri?: string
+    metadata?: Record<string, any>
+  }): Promise<DataSource> {
+    const updated = await apiClient.put<any>(`/api/data-sources/${id}`, {
+      name: dataSource.name,
+      type: dataSource.type,
+      connectionUri: dataSource.connectionUri,
+      metadata: dataSource.metadata,
+    })
+    return transformDataSource(updated)
   },
 
   async delete(id: string): Promise<void> {
-    // Implementar chamada à API quando disponível
-    // await fetch(`${API_BASE_URL}/api/data-sources/${id}`, { method: 'DELETE' })
+    await apiClient.delete(`/api/data-sources/${id}`)
+  },
+
+  async extractSchema(id: string): Promise<any> {
+    return apiClient.post(`/api/data-sources/${id}/extract-schema`)
+  },
+
+  async getSchema(id: string): Promise<any> {
+    return apiClient.get(`/api/data-sources/${id}/schema`)
+  },
+
+  async rescanSchema(id: string): Promise<any> {
+    return apiClient.post(`/api/data-sources/${id}/rescan`)
+  },
+
+  async getSnapshots(id: string): Promise<any[]> {
+    return apiClient.get(`/api/data-sources/${id}/snapshots`)
   },
 }
 

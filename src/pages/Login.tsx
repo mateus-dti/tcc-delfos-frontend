@@ -130,7 +130,7 @@ function Login() {
                   </p>
                   <Input
                     id="usernameOrEmail"
-                    type="email"
+                    type="text"
                     placeholder="Enter your username or email"
                     value={formData.usernameOrEmail}
                     onChange={(e) => {
